@@ -15,18 +15,32 @@ namespace IdentityServer
 {
     public class Startup
     {
+        string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
 
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                                      builder =>
+                                      {
+                                          builder.WithOrigins("http://localhost:4200")
+                                                              .AllowAnyHeader()
+                                                              .AllowAnyMethod();
+                                      });
+            });
+
             services.AddIdentityServer()
-                .AddInMemoryClients(Config.Clients)
-                .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryIdentityResources(Config.IdentityResources)
-                .AddTestUsers(TestUsers.Users)
-                .AddDeveloperSigningCredential();
+            .AddInMemoryClients(Config.Clients)
+            .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryIdentityResources(Config.IdentityResources)
+            .AddTestUsers(TestUsers.Users)
+            .AddDeveloperSigningCredential();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,6 +50,9 @@ namespace IdentityServer
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(MyAllowSpecificOrigins);
+
             app.UseStaticFiles();
             app.UseRouting();
             app.UseIdentityServer();

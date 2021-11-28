@@ -42,12 +42,32 @@ namespace IdentityServer
                         "movieAPI",
                         "roles"
                     }
+                },
+            new Client
+                {
+                    ClientId = "interactive.public",
+                    ClientName = "JavaScript Client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+                    RequireClientSecret = false,
+
+                    RedirectUris =           { "http://localhost:4200/signin-callback.html" },
+                    PostLogoutRedirectUris = { "http://localhost:4200/" },
+                    AllowedCorsOrigins =     { "http://localhost:4200" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "api"
+                    }
                 }
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>
            new ApiScope[] {
-               new ApiScope("movieAPI","Movie API")
+               new ApiScope("movieAPI","Movie API"),
+               new ApiScope("api","MyApi")
            };
 
         public static IEnumerable<ApiResource> ApiResources =>

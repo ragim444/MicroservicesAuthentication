@@ -15,11 +15,24 @@ namespace ApiGateway
 {
     public class Startup
     {
+        string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             var authenticationProviderKey = "IdentityApiKey";
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                                      builder =>
+                                      {
+                                          builder.WithOrigins("http://localhost:4200")
+                                                              .AllowAnyHeader()
+                                                              .AllowAnyMethod();
+                                      });
+            });
 
             services.AddAuthentication()
                 .AddJwtBearer(authenticationProviderKey, x =>
@@ -41,6 +54,7 @@ namespace ApiGateway
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseRouting();
 
